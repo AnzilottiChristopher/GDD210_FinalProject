@@ -45,32 +45,53 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(state == States.Patrolling && (!agent.hasPath)) 
+        switch (state)
         {
-            agent.SetDestination(GetPoint.Instance.GetRandomPoint(transform, patrolRange));
+            case States.Patrolling:
+                if (!agent.hasPath)
+                {
+                    agent.SetDestination(GetPoint.Instance.GetRandomPoint());
+                }
+                break;
+            case States.Idle:
+                break;
+            case States.Searching:
+                break;
+            case States.Chasing:
+                break;
+            case States.Attacking:
+                break;
+            case States.Investigating:
+                break;
+            case States.Stunned:
+                break;
+            case States.Dead:
+                break;
+            default:
+                break;
         }
     }
     void FixedUpdate()
     {
         if(eyesight())
         {
-            Debug.Log("Hit something");
+            state = States.Attacking;
         }
     }
 
     private bool eyesight()
     {
         RaycastHit lineOfSight;
-        bool hit = Physics.Raycast(eyes.transform.position, eyes.transform.right,
+        bool hit = Physics.Raycast(eyes.transform.position, eyes.transform.forward,
         out lineOfSight, detectionRange);
         if (hit)
         {
-            Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.right
+            Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
             * detectionRange, Color.red);
         }
         else
         {
-            Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.right
+            Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
             * detectionRange, Color.green);
         }
 
