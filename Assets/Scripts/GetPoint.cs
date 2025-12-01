@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using UnityEngine.AI;
 public class GetPoint : MonoBehaviour
 {
-    public float Range;
-    public static GetPoint Instance;
+    [SerializeField] private float Range;
+    [SerializeField] private float init_x;
+    [SerializeField] private float init_z;
+    [SerializeField] private float init_Range;
+    [SerializeField] private float player_z;
+    [SerializeField] private float player_x;
+    [SerializeField] private GameObject player;
 
     void Awake()
     {
-        Instance = this;
+        init_x = this.transform.position.x;
+        init_z = this.transform.position.y;
+        init_Range = Range;
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
@@ -37,6 +45,10 @@ public class GetPoint : MonoBehaviour
             return _point;
         }
         return point == null? Vector3.zero : point.position;
+    }
+    public void chasingPlayer(Transform player)
+    {
+        
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()

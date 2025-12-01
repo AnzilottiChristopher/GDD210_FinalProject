@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -28,10 +29,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject eyes;
     [SerializeField] private States state;
     private NavMeshAgent agent;
+    [SerializeField] private GetPoint instance; 
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        instance = transform.parent.Find("Point").GetComponent<GetPoint>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -50,7 +53,7 @@ public class Enemy : MonoBehaviour
             case States.Patrolling:
                 if (!agent.hasPath)
                 {
-                    agent.SetDestination(GetPoint.Instance.GetRandomPoint());
+                    agent.SetDestination(instance.GetRandomPoint());
                 }
                 break;
             case States.Idle:
@@ -58,8 +61,10 @@ public class Enemy : MonoBehaviour
             case States.Searching:
                 break;
             case States.Chasing:
+                chasing();
                 break;
             case States.Attacking:
+                attacking();
                 break;
             case States.Investigating:
                 break;
@@ -76,16 +81,27 @@ public class Enemy : MonoBehaviour
         if(eyesight())
         {
             state = States.Attacking;
+            agent.ResetPath();
         }
     }
 
+    private void chasing()
+    {
+        
+    }
+    private void attacking()
+    {
+        
+    }
     private bool eyesight()
     {
         RaycastHit lineOfSight;
         bool hit = Physics.Raycast(eyes.transform.position, eyes.transform.forward,
         out lineOfSight, detectionRange);
-        if (hit)
+        //If statements not needed just used for debugging purposes
+        if (hit && lineOfSight.collider.CompareTag("Player"))
         {
+            Debug.Log("Hit player");
             Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
             * detectionRange, Color.red);
         }
@@ -95,7 +111,7 @@ public class Enemy : MonoBehaviour
             * detectionRange, Color.green);
         }
 
-        return hit;
+        return hit && lineOfSight.collider != null && lineOfSight.collider.CompareTag("Player");
     }
 #if UNITY_EDITOR
     void OnDrawGizmos()

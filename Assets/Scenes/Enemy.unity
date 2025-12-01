@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 58075253}
   - component: {fileID: 58075252}
   - component: {fileID: 58075251}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player View
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 320143757}
   - component: {fileID: 320143761}
   - component: {fileID: 320143762}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,7 +360,7 @@ Transform:
   m_GameObject: {fileID: 320143756}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.47, y: 0.58, z: -10.9}
+  m_LocalPosition: {x: 7.47, y: 0.58, z: -7.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -381,8 +381,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   health: 3
-  detectionRange: 5
-  patrolRange: 3
+  detectionRange: 10
+  patrolRange: 5.18
   mainObj: {fileID: 0}
   eyes: {fileID: 0}
   state: 0
@@ -512,7 +512,7 @@ Transform:
   m_GameObject: {fileID: 796982884}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.6042624, y: -0.3946623, z: -1.3116316}
+  m_LocalPosition: {x: 0, y: -0.3946623, z: 0}
   m_LocalScale: {x: 3.3276, y: 3.3276, z: 3.3276}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -537,7 +537,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_UseGeometry: 0
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -681,7 +681,7 @@ GameObject:
   m_Component:
   - component: {fileID: 861641740}
   - component: {fileID: 861641741}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -697,7 +697,7 @@ Transform:
   m_GameObject: {fileID: 861641739}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.31, y: 0.76, z: -2.83}
+  m_LocalPosition: {x: 0, y: 0.76, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -715,7 +715,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb2fe718898c56240966d6452fe08fd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Range: 1.95
+  Range: 14.1
+  init_x: 0
+  init_z: 0
+  init_Range: 0
+  player_z: 0
+  player_x: 0
 --- !u!1 &887971821
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,7 +730,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 887971822}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -761,7 +766,7 @@ GameObject:
   - component: {fileID: 1201432244}
   - component: {fileID: 1201432243}
   - component: {fileID: 1201432242}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -871,9 +876,9 @@ GameObject:
   - component: {fileID: 1561751653}
   - component: {fileID: 1561751652}
   - component: {fileID: 1561751651}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
