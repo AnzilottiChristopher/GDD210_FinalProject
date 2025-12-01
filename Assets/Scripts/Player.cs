@@ -14,8 +14,11 @@ public class Player : MonoBehaviour
     public Vector3 velocity;
     public float gravity = -9.81f;
 
- 
-
+    [Header("Crouch Settings")]
+    public float crouchHeight = 1.0f;
+    public float standingHeight = 2.0f;
+    public float crouchSpeed = 2.5f;
+    public bool isCrouching = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,6 +34,7 @@ public class Player : MonoBehaviour
         handleMovement();
         handleCamera();
         handleGravity();
+        handleCrouch();
     }
 
     private void handleCamera()
@@ -62,8 +66,32 @@ public class Player : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-         //Player Movement Controls
+        // Adjust speed based on crouch state
+        float currentSpeed = isCrouching ? crouchSpeed : speed;
+
+        //Player Movement Controls
         Vector3 move = transform.right * horizontal + transform.forward * vertical;
-        controller.Move(move * speed * Time.deltaTime);
+        controller.Move(move * currentSpeed * Time.deltaTime);
+    }
+
+    private void handleCrouch()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouching = !isCrouching;
+
+            if (isCrouching)
+            {
+                // Crouch
+                controller.height = crouchHeight;
+                controller.center = new Vector3(0, crouchHeight / 2f, 0);
+            }
+            else
+            {
+                // Stand up without checking for obstacles
+                controller.height = standingHeight;
+                controller.center = new Vector3(0, standingHeight / 6f, 0);
+            }
+        }
     }
 }
