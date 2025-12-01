@@ -95,23 +95,24 @@ public class Enemy : MonoBehaviour
     }
     private bool eyesight()
     {
-        RaycastHit lineOfSight;
-        bool hit = Physics.Raycast(eyes.transform.position, eyes.transform.forward,
-        out lineOfSight, detectionRange);
-        //If statements not needed just used for debugging purposes
-        if (hit && lineOfSight.collider.CompareTag("Player"))
-        {
-            Debug.Log("Hit player");
-            Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
-            * detectionRange, Color.red);
-        }
-        else
-        {
-            Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
-            * detectionRange, Color.green);
-        }
+        return false;
+        // RaycastHit lineOfSight;
+        // bool hit = Physics.Raycast(eyes.transform.position, eyes.transform.forward,
+        // out lineOfSight, detectionRange);
+        // //If statements not needed just used for debugging purposes
+        // if (hit && lineOfSight.collider.CompareTag("Player"))
+        // {
+        //     Debug.Log("Hit player");
+        //     Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
+        //     * detectionRange, Color.red);
+        // }
+        // else
+        // {
+        //     Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
+        //     * detectionRange, Color.green);
+        // }
 
-        return hit && lineOfSight.collider != null && lineOfSight.collider.CompareTag("Player");
+        // return hit && lineOfSight.collider != null && lineOfSight.collider.CompareTag("Player");
     }
 #if UNITY_EDITOR
     void OnDrawGizmos()
