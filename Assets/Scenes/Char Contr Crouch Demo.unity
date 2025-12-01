@@ -383,6 +383,7 @@ MonoBehaviour:
   detectionRange: 10
   mainObj: {fileID: 0}
   eyes: {fileID: 0}
+  state: 0
 --- !u!1 &796982884
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,8 +734,8 @@ GameObject:
   - component: {fileID: 1561751655}
   - component: {fileID: 1561751654}
   - component: {fileID: 1561751653}
-  - component: {fileID: 1561751652}
   - component: {fileID: 1561751651}
+  - component: {fileID: 1561751657}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -767,24 +768,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1561751652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1561751650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5435383c1a6291843acb24e77f4746a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  controller: {fileID: 1561751651}
-  mouseSensitivity: 100
-  playerCamera: {fileID: 58075250}
-  velocity: {x: 0, y: 0, z: 0}
-  gravity: -9.81
 --- !u!136 &1561751653
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -877,6 +860,28 @@ Transform:
   - {fileID: 58075250}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1561751657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561751650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5435383c1a6291843acb24e77f4746a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  controller: {fileID: 1561751651}
+  mouseSensitivity: 100
+  playerCamera: {fileID: 58075250}
+  velocity: {x: 0, y: 0, z: 0}
+  gravity: -9.81
+  crouchHeight: 1
+  standingHeight: 2
+  crouchSpeed: 2.4
+  isCrouching: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
