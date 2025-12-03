@@ -880,7 +880,7 @@ MonoBehaviour:
   gravity: -9.81
   crouchHeight: 1
   standingHeight: 2
-  crouchSpeed: 2.4
+  crouchSpeed: 3
   isCrouching: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
