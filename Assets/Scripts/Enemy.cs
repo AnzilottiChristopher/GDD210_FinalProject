@@ -1,7 +1,8 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
+
 
 public class Enemy : MonoBehaviour
 {
@@ -30,18 +31,20 @@ public class Enemy : MonoBehaviour
     [SerializeField] private States state;
     private NavMeshAgent agent;
     [SerializeField] private GetPoint instance; 
+    [SerializeField] private FieldOfView fov;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         instance = transform.parent.Find("Point").GetComponent<GetPoint>();
+        mainObj = this.gameObject;
+        eyes = mainObj.transform.GetChild(0).gameObject;
+        fov = eyes.GetComponent<FieldOfView>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        mainObj = this.gameObject;
-        eyes = mainObj.transform.GetChild(0).gameObject;
         state = States.Patrolling;
     }
 
@@ -78,9 +81,12 @@ public class Enemy : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if(eyesight())
+        List<Transform> visibleTargets = fov.getVisibleTargets();
+        
+        if(fov.getVisibleTargets().Count > 0)
         {
-            state = States.Attacking;
+            Debug.Log("Player Found");
+            state = States.Chasing;
             agent.ResetPath();
         }
     }
@@ -92,27 +98,6 @@ public class Enemy : MonoBehaviour
     private void attacking()
     {
         
-    }
-    private bool eyesight()
-    {
-        return false;
-        // RaycastHit lineOfSight;
-        // bool hit = Physics.Raycast(eyes.transform.position, eyes.transform.forward,
-        // out lineOfSight, detectionRange);
-        // //If statements not needed just used for debugging purposes
-        // if (hit && lineOfSight.collider.CompareTag("Player"))
-        // {
-        //     Debug.Log("Hit player");
-        //     Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
-        //     * detectionRange, Color.red);
-        // }
-        // else
-        // {
-        //     Debug.DrawLine(eyes.transform.position, eyes.transform.position + eyes.transform.forward
-        //     * detectionRange, Color.green);
-        // }
-
-        // return hit && lineOfSight.collider != null && lineOfSight.collider.CompareTag("Player");
     }
 #if UNITY_EDITOR
     void OnDrawGizmos()

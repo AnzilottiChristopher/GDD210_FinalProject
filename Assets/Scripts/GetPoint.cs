@@ -4,19 +4,34 @@ using UnityEngine.AI;
 public class GetPoint : MonoBehaviour
 {
     [SerializeField] private float Range;
+    [SerializeField] private float smallRange;
     [SerializeField] private float init_x;
     [SerializeField] private float init_z;
     [SerializeField] private float init_Range;
-    [SerializeField] private float player_z;
-    [SerializeField] private float player_x;
     [SerializeField] private GameObject player;
+    private Vector3 playerPos;
+    private Vector3 lastKnownPlayerPos;
 
     void Awake()
     {
         init_x = this.transform.position.x;
         init_z = this.transform.position.y;
         init_Range = Range;
-        player = GameObject.FindGameObjectWithTag("Player");
+        playerPos = player.transform.position;
+    }
+    private void Update() {
+        playerPos = player.transform.position;
+    }
+    
+    public void foundPlayer()
+    {
+        Range = smallRange;
+        this.transform.position = playerPos;
+        lastKnownPlayerPos = player.transform.position;
+    }
+    public void trackPlayer()
+    {
+        
     }
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
@@ -45,10 +60,6 @@ public class GetPoint : MonoBehaviour
             return _point;
         }
         return point == null? Vector3.zero : point.position;
-    }
-    public void chasingPlayer(Transform player)
-    {
-        
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
