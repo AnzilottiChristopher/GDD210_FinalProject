@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject mainObj;
     [SerializeField] private GameObject eyes;
     [SerializeField] private States state;
+    [SerializeField] private float investigateTime = 4f;
+    private float investigateTimer;
     private NavMeshAgent agent;
     [SerializeField] private GetPoint instance; 
     [SerializeField] private FieldOfView fov;
@@ -62,6 +64,11 @@ public class Enemy : MonoBehaviour
             case States.Idle:
                 break;
             case States.Searching:
+                searchArea();
+                if(!agent.hasPath)
+                {
+                    agent.SetDestination(instance.GetRandomPoint());
+                }
                 break;
             case States.Chasing:
                 chasing();
@@ -81,19 +88,35 @@ public class Enemy : MonoBehaviour
     }
     void FixedUpdate()
     {
-        List<Transform> visibleTargets = fov.getVisibleTargets();
-        
-        if(fov.getVisibleTargets().Count > 0)
+        bool seesPlayer = fov.getVisibleTargets().Count > 0;
+        if(seesPlayer)
         {
-            Debug.Log("Player Found");
             state = States.Chasing;
+            instance.updateLastKnownPlayerPos();
+            
+        }
+        else if(state == States.Chasing)
+        {
+            state = States.Searching;
+            investigateTimer = investigateTime;
+            instance.lostPlayer();
+        }
+    }
+    private void searchArea()
+    {
+        investigateTimer -= Time.deltaTime;
+
+        if(investigateTimer <= 0f)
+        {
+            instance.resetPointToOrigin();
+            state = States.Patrolling;
             agent.ResetPath();
         }
     }
-
     private void chasing()
     {
-        
+        agent.speed = speed * 1.5f;
+        agent.SetDestination(instance.getPlayerPos());
     }
     private void attacking()
     {

@@ -5,8 +5,7 @@ public class GetPoint : MonoBehaviour
 {
     [SerializeField] private float Range;
     [SerializeField] private float smallRange;
-    [SerializeField] private float init_x;
-    [SerializeField] private float init_z;
+    [SerializeField] private Vector3 initLocation;
     [SerializeField] private float init_Range;
     [SerializeField] private GameObject player;
     private Vector3 playerPos;
@@ -14,26 +13,41 @@ public class GetPoint : MonoBehaviour
 
     void Awake()
     {
-        init_x = this.transform.position.x;
-        init_z = this.transform.position.y;
+        player = GameObject.FindGameObjectWithTag("Player");
         init_Range = Range;
+        initLocation = this.transform.position;
         playerPos = player.transform.position;
     }
     private void Update() {
         playerPos = player.transform.position;
     }
     
-    public void foundPlayer()
+    public void updateLastKnownPlayerPos()
     {
-        Range = smallRange;
-        this.transform.position = playerPos;
         lastKnownPlayerPos = player.transform.position;
     }
-    public void trackPlayer()
+    public Vector3 getLastKnownPlayerPos()
     {
+        return lastKnownPlayerPos;
+    }
+    public Vector3 getPlayerPos()
+    {
+        return player.transform.position;
+    }
+    public void lostPlayer()
+    {
+        Range = smallRange;
+        this.transform.position = lastKnownPlayerPos;
         
     }
+    public void resetPointToOrigin()
+    {
+        this.transform.position = initLocation;
+        Range = init_Range;
+    }
+    
 
+    
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {
         for (int i = 0; i < 30; i++)
