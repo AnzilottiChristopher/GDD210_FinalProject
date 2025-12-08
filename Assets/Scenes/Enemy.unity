@@ -387,6 +387,10 @@ MonoBehaviour:
   eyes: {fileID: 0}
   state: 0
   investigateTime: 4
+  hearingRange: 8
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 64
   instance: {fileID: 0}
   fov: {fileID: 0}
 --- !u!195 &320143762
@@ -985,8 +989,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e2ab4b5a6804674ba2ce0854bf743ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRadius: 8.42
-  viewAngle: 134
+  viewRadius: 9.88
+  viewAngle: 81.6
   targetMask:
     serializedVersion: 2
     m_Bits: 64

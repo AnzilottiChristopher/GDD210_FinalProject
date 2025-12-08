@@ -14,6 +14,9 @@ public class Player : MonoBehaviour
     public Vector3 velocity;
     public float gravity = -9.81f;
 
+    [Header("Health Settings")]
+    [SerializeField] private int health;
+
     [Header("Crouch Settings")]
     public float crouchHeight = 1.0f;
     public float standingHeight = 2.0f;
@@ -26,6 +29,7 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         controller = GetComponent<CharacterController>();
+        health = 3;
     }
 
     // Update is called once per frame
@@ -93,5 +97,9 @@ public class Player : MonoBehaviour
                 controller.center = new Vector3(0, standingHeight / 6f, 0);
             }
         }
+    }
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
     }
 }

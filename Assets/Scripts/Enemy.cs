@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
 
 
     // Basic enemy stats
+    [Header("Basic Enemy Stats")]
     [SerializeField] private float speed = 3.0f;
     [SerializeField] private int health = 3;
     [SerializeField] private float detectionRange;
@@ -29,9 +30,23 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject mainObj;
     [SerializeField] private GameObject eyes;
     [SerializeField] private States state;
+    
+    [Header("How much time the AI spends looking")]
     [SerializeField] private float investigateTime = 4f;
     private float investigateTimer;
+    
+    [Header("What the AI listens for")]
+    [SerializeField] private float hearingRange = 8f;
+    [SerializeField] private LayerMask playerMask;
     private NavMeshAgent agent;
+    private bool isHearing = false;
+    
+    [Header("Attacking Range")]
+    [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float attackCooldown = 1.5f; //This is if player can survive multiple hits
+    private float attackTimer = 0f;
+    
+    [Header("References to Other Objects")]
     [SerializeField] private GetPoint instance; 
     [SerializeField] private FieldOfView fov;
 
@@ -56,7 +71,9 @@ public class Enemy : MonoBehaviour
         switch (state)
         {
             case States.Patrolling:
-                if (!agent.hasPath)
+                agent.speed = speed;
+                PlayerTracker.TrackerInstance.UpdatePointLocation(instance);
+                if(!agent.hasPath)
                 {
                     agent.SetDestination(instance.GetRandomPoint());
                 }
@@ -99,7 +116,29 @@ public class Enemy : MonoBehaviour
         {
             state = States.Searching;
             investigateTimer = investigateTime;
-            instance.lostPlayer();
+            instance.respondToAlert();
+        }
+        else
+        {
+            CheckHearing();
+        }
+    }
+    private void CheckHearing()
+    {
+        isHearing = false;
+        Collider[] hits = Physics.OverlapSphere(transform.position, hearingRange, playerMask);
+
+        if(hits.Length > 0)
+        {
+            Player player = hits[0].GetComponent<Player>();
+            if(!player.isCrouching && state != States.Chasing)
+            {
+                isHearing = true;
+                instance.updateLastKnownPlayerPos();
+                state = States.Searching;
+                investigateTimer = investigateTime;
+                instance.respondToAlert();
+            }
         }
     }
     private void searchArea()
@@ -117,15 +156,60 @@ public class Enemy : MonoBehaviour
     {
         agent.speed = speed * 1.5f;
         agent.SetDestination(instance.getPlayerPos());
+        
+        float distanceToPlayer = Vector3.Distance(transform.position, instance.getPlayerPos());
+        if(distanceToPlayer <= attackRange)
+        {
+            state = States.Attacking;
+            agent.ResetPath();
+        }
     }
     private void attacking()
     {
-        
+        // Make enemy face the player
+        Vector3 direction = (instance.getPlayerPos() - transform.position).normalized;
+        direction.y = 0; // keep only horizontal rotation
+        if(direction != Vector3.zero)
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * 5f);
+
+        // Countdown timer for attack cooldown
+        attackTimer -= Time.deltaTime;
+
+        if (attackTimer <= 0f)
+        {
+            // Attack logic here
+            // e.g., reduce player health, play attack animation, sound, etc.
+            Player player = instance.getPlayerPos() != null ? instance.getPlayerObj().GetComponent<Player>() : null;
+            if(player != null)
+            {
+                player.TakeDamage(1);
+            }
+
+            attackTimer = attackCooldown; // reset cooldown
     }
+
+        float distanceToPlayer = Vector3.Distance(transform.position, instance.getPlayerPos());
+        if(distanceToPlayer > attackRange)
+        {
+            state = States.Chasing;
+        }
+    }
+    
+
 #if UNITY_EDITOR
     void OnDrawGizmos()
     {
+        Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, patrolRange);
+        
+        if(isHearing)
+        {
+            Gizmos.color = Color.red;
+        } else
+        {
+            Gizmos.color = Color.green;
+        }
+        Gizmos.DrawWireSphere(transform.position, hearingRange);
     }
 #endif
 }

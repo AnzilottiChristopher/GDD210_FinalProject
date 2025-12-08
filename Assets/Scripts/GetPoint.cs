@@ -24,7 +24,11 @@ public class GetPoint : MonoBehaviour
     
     public void updateLastKnownPlayerPos()
     {
-        lastKnownPlayerPos = player.transform.position;
+        lastKnownPlayerPos = playerPos;
+    }
+    public void updateFakePlayerPos(Vector3 fakePos)
+    {
+        lastKnownPlayerPos = fakePos;
     }
     public Vector3 getLastKnownPlayerPos()
     {
@@ -32,9 +36,9 @@ public class GetPoint : MonoBehaviour
     }
     public Vector3 getPlayerPos()
     {
-        return player.transform.position;
+        return playerPos;
     }
-    public void lostPlayer()
+    public void respondToAlert()
     {
         Range = smallRange;
         this.transform.position = lastKnownPlayerPos;
@@ -44,6 +48,10 @@ public class GetPoint : MonoBehaviour
     {
         this.transform.position = initLocation;
         Range = init_Range;
+    }
+    public GameObject getPlayerObj()
+    {
+        return player;
     }
     
 
