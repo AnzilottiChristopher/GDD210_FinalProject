@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     public float standingHeight = 2.0f;
     public float crouchSpeed = 2.5f;
     public bool isCrouching = false;
+    public bool isMoving = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -72,6 +73,9 @@ public class Player : MonoBehaviour
 
         // Adjust speed based on crouch state
         float currentSpeed = isCrouching ? crouchSpeed : speed;
+
+        isMoving = (horizontal != 0f || vertical != 0f);
+
 
         //Player Movement Controls
         Vector3 move = transform.right * horizontal + transform.forward * vertical;

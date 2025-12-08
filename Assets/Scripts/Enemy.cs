@@ -53,10 +53,19 @@ public class Enemy : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        instance = transform.parent.Find("Point").GetComponent<GetPoint>();
+        instance = transform.parent?.Find("Point")?.GetComponent<GetPoint>();
+        if(instance == null)
+        {
+            instance = transform.Find("Point")?.GetComponent<GetPoint>();
+        }
         mainObj = this.gameObject;
-        eyes = mainObj.transform.GetChild(0).gameObject;
+        eyes = mainObj.transform.Find("Body").GetChild(0).gameObject;
         fov = eyes.GetComponent<FieldOfView>();
+        
+        if(instance == null)
+        {
+            Debug.LogError("GetPoint not found");
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -72,7 +81,11 @@ public class Enemy : MonoBehaviour
         {
             case States.Patrolling:
                 agent.speed = speed;
-                PlayerTracker.TrackerInstance.UpdatePointLocation(instance);
+                
+                if(PlayerTracker.TrackerInstance.ShouldGiveHint())
+                {
+                    PlayerTracker.TrackerInstance.GiveHintToEnemy(instance);
+                }
                 if(!agent.hasPath)
                 {
                     agent.SetDestination(instance.GetRandomPoint());
@@ -81,7 +94,8 @@ public class Enemy : MonoBehaviour
             case States.Idle:
                 break;
             case States.Searching:
-                searchArea();
+                _timer();
+                agent.speed = speed * 1.2f;
                 if(!agent.hasPath)
                 {
                     agent.SetDestination(instance.GetRandomPoint());
@@ -94,6 +108,12 @@ public class Enemy : MonoBehaviour
                 attacking();
                 break;
             case States.Investigating:
+                agent.speed = speed * 0.5f;
+                _timer();
+                if(!agent.hasPath)
+                {
+                    agent.SetDestination(instance.GetRandomPoint());
+                }
                 break;
             case States.Stunned:
                 break;
@@ -131,17 +151,19 @@ public class Enemy : MonoBehaviour
         if(hits.Length > 0)
         {
             Player player = hits[0].GetComponent<Player>();
-            if(!player.isCrouching && state != States.Chasing)
+            if(!player.isCrouching && state != States.Chasing && player.isMoving)
             {
                 isHearing = true;
                 instance.updateLastKnownPlayerPos();
-                state = States.Searching;
+                state = States.Investigating;
                 investigateTimer = investigateTime;
                 instance.respondToAlert();
+                if(agent.hasPath)
+                    agent.ResetPath();
             }
         }
     }
-    private void searchArea()
+    private void _timer()
     {
         investigateTimer -= Time.deltaTime;
 
