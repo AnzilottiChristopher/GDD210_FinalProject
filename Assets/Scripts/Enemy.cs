@@ -151,7 +151,7 @@ public class Enemy : MonoBehaviour
         if(hits.Length > 0)
         {
             Player player = hits[0].GetComponent<Player>();
-            if(!player.isCrouching && state != States.Chasing && player.isMoving)
+            if(player.isMoving && !player.isCrouching && state != States.Chasing)
             {
                 isHearing = true;
                 instance.updateLastKnownPlayerPos();
