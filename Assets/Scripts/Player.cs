@@ -24,6 +24,10 @@ public class Player : MonoBehaviour
     public bool isCrouching = false;
     public bool isMoving = false;
 
+    [Header("Flashlight Settings")]
+    [SerializeField] private Light flashlight;
+    private bool isFlashlightOn = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -31,6 +35,12 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         controller = GetComponent<CharacterController>();
         health = 3;
+
+        // Ensure flashlight is off at the start
+        if (flashlight != null)
+        {
+            flashlight.enabled = false;
+        }
     }
 
     // Update is called once per frame
@@ -40,6 +50,7 @@ public class Player : MonoBehaviour
         handleCamera();
         handleGravity();
         handleCrouch();
+        handleFlashlight();
     }
 
     private void handleCamera()
@@ -102,6 +113,20 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    private void handleFlashlight()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            isFlashlightOn = !isFlashlightOn;
+
+            if (flashlight != null)
+            {
+                flashlight.enabled = isFlashlightOn;
+            }
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         health -= damage;
