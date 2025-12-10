@@ -63,6 +63,10 @@ public class Enemy : MonoBehaviour
     private float flashlightTimer = 0f;
     private bool isDead = false;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource audioSource; // Reference to the AudioSource
+    [SerializeField] private AudioClip chaseSound; // Sound to play when chasing the player
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -143,17 +147,29 @@ public class Enemy : MonoBehaviour
     void FixedUpdate()
     {
         bool seesPlayer = fov.getVisibleTargets().Count > 0;
-        if(seesPlayer)
+        if (seesPlayer)
         {
             state = States.Chasing;
             instance.updateLastKnownPlayerPos();
-            
+
+            // Play the chase sound if not already playing
+            if (!audioSource.isPlaying)
+            {
+                audioSource.clip = chaseSound;
+                audioSource.Play();
+            }
         }
-        else if(state == States.Chasing)
+        else if (state == States.Chasing)
         {
             state = States.Searching;
             investigateTimer = investigateTime;
             instance.respondToAlert();
+
+            // Stop the chase sound when the enemy stops chasing
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
         }
         else
         {
