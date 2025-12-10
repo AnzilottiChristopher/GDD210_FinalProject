@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class PlayerInteract : MonoBehaviour
 {
-    [SerializeField] float interactDistance = 3f;
+    [SerializeField] float interactDistance = 8f;
     [SerializeField] LayerMask interactLayer;
     
     [SerializeField] Image crosshair;

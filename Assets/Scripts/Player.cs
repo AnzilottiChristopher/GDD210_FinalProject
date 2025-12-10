@@ -28,6 +28,21 @@ public class Player : MonoBehaviour
     [SerializeField] private Light flashlight;
     private bool isFlashlightOn = false;
 
+    //Flashlight Batteries
+    [SerializeField] private float maxBattery = 10f;
+    [SerializeField] private float batteryDrainRate = 1f;
+    [SerializeField] private float rechargeDelay = 2f;
+    [SerializeField] private float rechargeRate = 2f;
+    private float currentBattery;
+    private bool isRecharging = false;
+    private float rechargeTimer = 0f;
+    
+    //Flashlight Intensity
+    [SerializeField] private float maxIntensity = 9.5f;
+    [SerializeField] private float minIntensity = 2f;
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -35,11 +50,14 @@ public class Player : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         controller = GetComponent<CharacterController>();
         health = 3;
+        
+        currentBattery = maxBattery;
 
         // Ensure flashlight is off at the start
         if (flashlight != null)
         {
             flashlight.enabled = false;
+            flashlight.intensity = maxIntensity;
         }
     }
 
@@ -116,14 +134,56 @@ public class Player : MonoBehaviour
 
     private void handleFlashlight()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        // Toggle flashlight
+        if (Input.GetKeyDown(KeyCode.F) && currentBattery > 0)
         {
             isFlashlightOn = !isFlashlightOn;
-
             if (flashlight != null)
-            {
                 flashlight.enabled = isFlashlightOn;
+        }
+
+        // Drain battery if flashlight is on
+        if (isFlashlightOn && currentBattery > 0)
+        {
+            currentBattery -= batteryDrainRate * Time.deltaTime;
+            if (currentBattery <= 0)
+            {
+                currentBattery = 0;
+                isFlashlightOn = false;
+                if (flashlight != null) flashlight.enabled = false;
+                isRecharging = true;
+                rechargeTimer = 0f;
             }
+        }
+
+        // Recharge battery when flashlight is off
+        if (!isFlashlightOn && currentBattery < maxBattery)
+        {
+            if (!isRecharging)
+            {
+                rechargeTimer += Time.deltaTime;
+                if (rechargeTimer >= rechargeDelay)
+                {
+                    isRecharging = true;
+                }
+            }
+            else
+            {
+                currentBattery += rechargeRate * Time.deltaTime;
+                if (currentBattery >= maxBattery)
+                {
+                    currentBattery = maxBattery;
+                    isRecharging = false;
+                    rechargeTimer = 0f;
+                }
+            }
+        }
+
+        // Update flashlight intensity based on battery
+        if (flashlight != null)
+        {
+            float t = currentBattery / maxBattery;
+            flashlight.intensity = Mathf.Lerp(minIntensity, maxIntensity, t);
         }
     }
 

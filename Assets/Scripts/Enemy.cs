@@ -30,6 +30,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject mainObj;
     [SerializeField] private GameObject eyes;
     [SerializeField] private States state;
+    [SerializeField] private Vector3 spawnPoint;
     
     [Header("How much time the AI spends looking")]
     [SerializeField] private float investigateTime = 4f;
@@ -49,6 +50,18 @@ public class Enemy : MonoBehaviour
     [Header("References to Other Objects")]
     [SerializeField] private GetPoint instance; 
     [SerializeField] private FieldOfView fov;
+
+    [Header("Stuck / Respawn Settings")]
+    [SerializeField] private float stuckThreshold = 0.1f;
+    [SerializeField] private float stuckTime = 5f;
+    private Vector3 lastPosition;
+    private float stuckTimer;
+    
+    [Header("Flashlight Interaction")]
+    [SerializeField] private float flashlightKillTime = 3f;
+    [SerializeField] private float respawnDelay = 5f;
+    private float flashlightTimer = 0f;
+    private bool isDead = false;
 
     void Awake()
     {
@@ -71,7 +84,9 @@ public class Enemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        spawnPoint = this.transform.position;
         state = States.Patrolling;
+        lastPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -122,6 +137,8 @@ public class Enemy : MonoBehaviour
             default:
                 break;
         }
+        CheckIfStuck();
+        CheckFlashlight();
     }
     void FixedUpdate()
     {
@@ -142,6 +159,86 @@ public class Enemy : MonoBehaviour
         {
             CheckHearing();
         }
+    }
+    private void CheckFlashlight()
+    {
+        if (isDead) return; // don't do anything if dead
+
+        // Find the player flashlight (assign via inspector or find tag)
+        GameObject player = GameObject.FindWithTag("Player");
+        if(player == null) return;
+
+        Light flashlight = player.GetComponentInChildren<Light>();
+        if(flashlight == null || !flashlight.enabled) 
+        {
+            flashlightTimer = 0f; // reset timer if flashlight off
+            return;
+        }
+
+        // Check if enemy is inside the flashlight cone
+        Vector3 directionToEnemy = (transform.position - flashlight.transform.position).normalized;
+        float angle = Vector3.Angle(flashlight.transform.forward, directionToEnemy);
+
+        // Use some range (spotAngle / 2) to detect if enemy is in cone
+        if(angle < flashlight.spotAngle / 2f && Vector3.Distance(transform.position, flashlight.transform.position) < flashlight.range)
+        {
+            flashlightTimer += Time.deltaTime;
+
+            if(flashlightTimer >= flashlightKillTime)
+            {
+                KillEnemy();
+            }
+        }
+        else
+        {
+            flashlightTimer = 0f;
+        }
+    }
+    private void KillEnemy()
+    {
+        if (isDead) return;
+
+        isDead = true;
+        state = States.Dead;
+        agent.isStopped = true;
+        agent.ResetPath();
+        
+        StartCoroutine(RespawnEnemy());
+    }
+    private System.Collections.IEnumerator RespawnEnemy()
+    {
+        yield return new WaitForSeconds(respawnDelay);
+
+        mainObj.SetActive(true);
+        transform.position = spawnPoint; // or entrance position if different
+        agent.Warp(spawnPoint);
+        state = States.Patrolling;
+        agent.isStopped = false;
+        isDead = false;
+        flashlightTimer = 0f;
+    }
+    private void CheckIfStuck()
+    {
+        float distanceMoved = Vector3.Distance(transform.position, lastPosition);
+
+        if(distanceMoved < stuckThreshold)
+        {
+            stuckTimer += Time.deltaTime;
+            if(stuckTimer >= stuckTime)
+            {
+                // Respawn at spawn point
+                agent.Warp(spawnPoint); // instantly moves NavMeshAgent to spawn
+                agent.ResetPath();
+                state = States.Patrolling;
+                stuckTimer = 0f;
+            }
+        }
+        else
+        {
+            stuckTimer = 0f; // reset timer if moving
+        }
+
+        lastPosition = transform.position;
     }
     private void CheckHearing()
     {
