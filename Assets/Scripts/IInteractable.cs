@@ -2,8 +2,14 @@ using UnityEngine;
 
 public class IInteractable : MonoBehaviour
 {
+    public bool isCollectible = false;
     public void Interact()
     {
-        Debug.Log("Interacted with " + name);
+        
+        if(isCollectible)
+        {
+            GameManager.Manager.AddCollectible();
+            Destroy(gameObject);
+        }
     }
 }

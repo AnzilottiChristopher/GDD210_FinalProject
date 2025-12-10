@@ -301,7 +301,8 @@ public class Enemy : MonoBehaviour
             Player player = instance.getPlayerPos() != null ? instance.getPlayerObj().GetComponent<Player>() : null;
             if(player != null)
             {
-                player.TakeDamage(1);
+                // player.TakeDamage(1);
+                GameManager.Manager.LoseGame();
             }
 
             attackTimer = attackCooldown; // reset cooldown
